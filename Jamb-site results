@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAMB Portal</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:linear-gradient(135deg,#0f2027,#2c5364);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+/* Pages */
+.page{display:none;}
+.active{display:block;}
+
+/* Card */
+.card{
+    background:white;
+    padding:25px;
+    width:320px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
+    animation:fade 0.5s ease;
+}
+
+h2{margin-bottom:10px;}
+
+select,input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:6px;
+    background:#006400;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+    background:#004d00;
+}
+
+/* Loader */
+.loader{
+    border:4px solid #eee;
+    border-top:4px solid green;
+    border-radius:50%;
+    width:30px;
+    height:30px;
+    animation:spin 1s linear infinite;
+    margin:15px auto;
+    display:none;
+}
+
+/* Text */
+.red{color:red;}
+.link{
+    margin-top:15px;
+    display:inline-block;
+    color:white;
+    background:red;
+    padding:10px;
+    text-decoration:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+#msg{
+    margin-top:15px;
+    color:red;
+    display:none;
+}
+
+/* Animations */
+@keyframes spin{
+    0%{transform:rotate(0);}
+    100%{transform:rotate(360deg);}
+}
+
+@keyframes fade{
+    from{opacity:0; transform:translateY(20px);}
+    to{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+<div class="card page active" id="page1">
+    <h2>JAMB Result Checker</h2>
+
+    <select id="method">
+        <option value="reg">Registration Number</option>
+        <option value="email">Email</option>
+        <option value="phone">Phone Number</option>
+    </select>
+
+    <input type="text" id="input" placeholder="Enter Registration Number">
+
+    <button onclick="check()">Check Result</button>
+
+    <div class="loader" id="loader"></div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="card page" id="page2">
+    <h2 class="red">Ishaya Nathaniel Result Blocked</h2>
+    <p>Contact JAMB support service</p>
+
+    <div class="link" onclick="goService()">Proceed to Service</div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="card page" id="page3">
+    <h2>JAMB Support Service</h2>
+    <p>Resolve your issue</p>
+
+    <button onclick="resolve()">Resolve Issue</button>
+
+    <p id="msg">Service unavailable. Try again later.</p>
+</div>
+
+<script>
+// Switch pages
+function showPage(id){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+// Change placeholder
+const method = document.getElementById("method");
+const inputField = document.getElementById("input");
+
+method.addEventListener("change", ()=>{
+    if(method.value === "reg"){
+        inputField.placeholder = "Enter Registration Number";
+    } else if(method.value === "email"){
+        inputField.placeholder = "Enter Email Address";
+    } else {
+        inputField.placeholder = "Enter Phone Number";
+    }
+});
+
+// Main check function
+function check(){
+    let val = inputField.value.trim();
+    let loader = document.getElementById("loader");
+    let type = method.value;
+
+    if(val === ""){
+        alert("Enter your details");
+        return;
+    }
+
+    // Email validation
+    if(type === "email"){
+        let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+        if(!emailPattern.test(val)){
+            alert("Enter a valid email address");
+            return;
+        }
+    }
+
+    // Phone validation (Nigeria)
+    if(type === "phone"){
+        let phonePattern = /^(070|080|081|090|091)\d{8}$/;
+        if(!phonePattern.test(val)){
+            alert("Enter a valid Nigerian phone number");
+            return;
+        }
+    }
+
+    // Reg validation
+    if(type === "reg"){
+        if(val.length < 8){
+            alert("Invalid registration number");
+            return;
+        }
+    }
+
+    loader.style.display = "block";
+
+    setTimeout(()=>{
+        showPage("page2");
+        loader.style.display = "none";
+    },2000);
+}
+
+// Go to service
+function goService(){
+    showPage("page3");
+}
+
+// Final action
+function resolve(){
+    document.getElementById("msg").style.display = "block";
+}
+</script>
+
+</body>
+</html>
